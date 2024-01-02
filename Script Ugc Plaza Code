@@ -1,0 +1,27 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "YT: 2KE02", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local GeneralesSection = Window:MakeTab({
+    Name = "Generales",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+}):AddSection({
+    Name = "Generales"
+})
+
+GeneralesSection:AddButton({
+    Name = "Auto prompt",
+    Callback = function()
+        local id = 14315706940
+        
+        for i,v in pairs(game:GetDescendants()) do
+            if v:IsA("RemoteEvent") then
+                v:FireServer(id)
+            elseif v:IsA("BindableEvent") then
+                v:Fire(id)
+            elseif v:IsA("RemoteFunction") then
+                v:InvokeServer(id)
+            end
+        end
+    end
+})
