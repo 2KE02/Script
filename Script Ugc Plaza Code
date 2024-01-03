@@ -1,6 +1,9 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "YT: 2KE02", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
+local spinActive = false
+local spinLoop = nil
+
 local GeneralesSection = Window:MakeTab({
     Name = "Generales",
     Icon = "rbxassetid://4483345998",
@@ -10,17 +13,43 @@ local GeneralesSection = Window:MakeTab({
 })
 
 GeneralesSection:AddButton({
-    Name = "Auto prompt",
+    Name = "Auto Spin (Click again to disable)",
     Callback = function()
-        local id = 14315706940
-        
-        for i,v in pairs(game:GetDescendants()) do
-            if v:IsA("RemoteEvent") then
-                v:FireServer(id)
-            elseif v:IsA("BindableEvent") then
-                v:Fire(id)
-            elseif v:IsA("RemoteFunction") then
-                v:InvokeServer(id)
+        spinActive = not spinActive
+        if spinActive then
+            spinLoop = spawn(function()
+                while spinActive do
+                    game:GetService("ReplicatedStorage").Remotes.wheelRoll:InvokeServer()
+                    wait()
+                end
+            end)
+        else
+            if spinLoop then
+                spinLoop:Destroy()
+            end
+        end
+    end
+})
+
+GeneralesSection:AddButton({
+    Name = "Anti-AFK",
+    Callback = function()
+        local character = game.Players.LocalPlayer.Character
+        local humanoid = character:WaitForChild("Humanoid")
+
+        local jumps = 6
+        local jumpDelay = 10
+        local walkDelay = 10
+
+        while true do
+            for i = 1, jumps do
+                humanoid.Jump = true
+                wait(jumpDelay)
+            end
+
+            for i = 1, walkDelay / 0.5 do
+                humanoid.WalkToPoint = character.HumanoidRootPart.Position + character.HumanoidRootPart.CFrame.lookVector * 2
+                wait(0.5)
             end
         end
     end
